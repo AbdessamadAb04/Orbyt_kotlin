@@ -1,0 +1,38 @@
+[
+  {
+    "id": "t1",
+    "title": "Continuer le projet Orbyt",
+    "description": "Finaliser la migration vers Supabase",
+    "type": "SIMPLE",
+    "priority": "HIGH",
+    "status": "TODO",
+    "due_date": "2026-05-18",
+    "nebula_id": "neb1",
+    "created_at": "2026-05-18T10:00:00Z",
+    "updated_at": "2026-05-18T10:00:00Z"
+  },
+  {
+    "id": "t2",
+    "title": "Réunion d'équipe",
+    "description": "Sync hebdomadaire",
+    "type": "SIMPLE",
+    "priority": "NORMAL",
+    "status": "TODO",
+    "due_date": "2026-05-18",
+    "nebula_id": "neb1",
+    "created_at": "2026-05-18T11:00:00Z",
+    "updated_at": "2026-05-18T11:00:00Z"
+  },
+  {
+    "id": "t3",
+    "title": "Acheter équipement yoga",
+    "description": "Tapis et briques",
+    "type": "SIMPLE",
+    "priority": "LOW",
+    "status": "DONE",
+    "due_date": "2026-05-18",
+    "nebula_id": "neb2",
+    "created_at": "2026-05-18T11:00:00Z",
+    "updated_at": "2026-05-18T11:00:00Z"
+  }
+]

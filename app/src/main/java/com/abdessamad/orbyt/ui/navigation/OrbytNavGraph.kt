@@ -7,12 +7,11 @@ import androidx.navigation.compose.composable
 import androidx.compose.ui.Modifier
 import com.abdessamad.orbyt.ui.agenda.AgendaScreen
 import com.abdessamad.orbyt.ui.dashboard.DashboardScreen
-import com.abdessamad.orbyt.ui.goals.GoalsScreen
 import com.abdessamad.orbyt.ui.habits.HabitsScreen
 import com.abdessamad.orbyt.ui.notes.NotesScreen
 import com.abdessamad.orbyt.ui.profile.ProfileScreen
 import com.abdessamad.orbyt.ui.tasks.TasksScreen
-import com.abdessamad.orbyt.ui.viewmodel.*
+import com.abdessamad.orbyt.ui.viewmodels.*
 import com.abdessamad.orbyt.ui.welcome.WelcomeScreen
 
 @Composable
@@ -22,7 +21,6 @@ fun OrbytNavGraph(
     habitViewModel: HabitViewModel,
     appointmentViewModel: AppointmentViewModel,
     noteViewModel: NoteViewModel,
-    goalViewModel: GoalViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -45,7 +43,6 @@ fun OrbytNavGraph(
                 habitViewModel = habitViewModel,
                 appointmentViewModel = appointmentViewModel,
                 noteViewModel = noteViewModel,
-                goalViewModel = goalViewModel,
                 onNavigate = { destination ->
                     navController.navigate(destination.route)
                 }
@@ -62,9 +59,6 @@ fun OrbytNavGraph(
         }
         composable(NavDestination.Notes.route) {
             NotesScreen(noteViewModel = noteViewModel)
-        }
-        composable(NavDestination.Goals.route) {
-            GoalsScreen(goalViewModel = goalViewModel)
         }
         composable(NavDestination.Profile.route) {
             ProfileScreen()

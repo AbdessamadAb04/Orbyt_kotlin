@@ -6,10 +6,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,11 +25,10 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.abdessamad.orbyt.data.local.OrbytDatabase
 import com.abdessamad.orbyt.ui.navigation.NavDestination
 import com.abdessamad.orbyt.ui.navigation.OrbytNavGraph
 import com.abdessamad.orbyt.ui.theme.OrbytTheme
-import com.abdessamad.orbyt.ui.viewmodel.*
+import dagger.hilt.android.AndroidEntryPoint
 
 sealed class BottomNavItem(
     val route: String,
@@ -34,24 +41,16 @@ sealed class BottomNavItem(
     object Profile : BottomNavItem(NavDestination.Profile.route, "Profile", Icons.Outlined.Person, Icons.Filled.Person)
 }
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val database = OrbytDatabase.getInstance(this)
-        val factory = ViewModelFactory(database)
-
         setContent {
             OrbytTheme {
                 val navController = rememberNavController()
                 
-                val taskViewModel: TaskViewModel = viewModel(factory = factory)
-                val habitViewModel: HabitViewModel = viewModel(factory = factory)
-                val appointmentViewModel: AppointmentViewModel = viewModel(factory = factory)
-                val noteViewModel: NoteViewModel = viewModel(factory = factory)
-                val goalViewModel: GoalViewModel = viewModel(factory = factory)
-
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
                 val currentRoute = currentDestination?.route
@@ -95,12 +94,11 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     OrbytNavGraph(
                         navController = navController,
-                        taskViewModel = taskViewModel,
-                        habitViewModel = habitViewModel,
-                        appointmentViewModel = appointmentViewModel,
-                        noteViewModel = noteViewModel,
-                        goalViewModel = goalViewModel,
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        taskViewModel = viewModel(),
+                        habitViewModel = viewModel(),
+                        appointmentViewModel = viewModel(),
+                        noteViewModel = viewModel()
                     )
                 }
             }

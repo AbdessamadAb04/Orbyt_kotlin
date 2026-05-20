@@ -22,16 +22,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.abdessamad.orbyt.data.local.entity.Appointment
-import com.abdessamad.orbyt.data.local.entity.Habit
-import com.abdessamad.orbyt.data.local.entity.HabitLog
-import com.abdessamad.orbyt.data.local.entity.Goal
-import com.abdessamad.orbyt.data.local.entity.GoalStatus
+import com.abdessamad.orbyt.data.models.Appointment
+import com.abdessamad.orbyt.data.models.Habit
+import com.abdessamad.orbyt.data.models.HabitLog
 import com.abdessamad.orbyt.ui.components.ModuleHeader
 import com.abdessamad.orbyt.ui.components.OrbytCard
 import com.abdessamad.orbyt.ui.navigation.NavDestination
 import com.abdessamad.orbyt.ui.theme.*
-import com.abdessamad.orbyt.ui.viewmodel.*
+import com.abdessamad.orbyt.ui.viewmodels.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,14 +39,12 @@ fun DashboardScreen(
     habitViewModel: HabitViewModel,
     appointmentViewModel: AppointmentViewModel,
     noteViewModel: NoteViewModel,
-    goalViewModel: GoalViewModel,
     onNavigate: (NavDestination) -> Unit
 ) {
     val pinnedNote by noteViewModel.pinnedNote.collectAsState()
     val allAppointments by appointmentViewModel.allAppointments.collectAsState()
     val habits by habitViewModel.allHabits.collectAsState()
     val todayLogs by habitViewModel.todayLogs.collectAsState()
-    val goals by goalViewModel.allGoals.collectAsState()
 
     var selectedDate by remember { mutableStateOf(Date()) }
 
@@ -88,71 +84,21 @@ fun DashboardScreen(
                 )
             }
 
-            DashboardModuleContainer {
-                // 4. Objectives (Top 5)
-                GoalsWidget(
-                    goals = goals,
-                    onClick = { onNavigate(NavDestination.Goals) }
-                )
-            }
-
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
 @Composable
-private fun DashboardModuleContainer(
-    content: @Composable ColumnScope.() -> Unit
+fun GoalsWidget(
+    goals: List<Any>,
+    onClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.03f))
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        content = content
-    )
+    // TODO: Implement GoalsWidget
 }
 
 @Composable
-private fun DashboardHeader() {
-    val today = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 16.dp)
-    ) {
-        Text(
-            text = "Orbyt",
-            style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = today.replaceFirstChar { it.uppercase() },
-            style = MaterialTheme.typography.labelMedium,
-            color = TextSecondaryLight
-        )
-    }
-}
-
-@Composable
-private fun ModuleHeader(
-    title: String,
-    onClick: () -> Unit,
-    containerColor: Color? = null
-) {
-    com.abdessamad.orbyt.ui.components.ModuleHeader(
-        title = title,
-        onClick = onClick,
-        containerColor = containerColor
-    )
-}
-
-@Composable
-private fun NoteWidget(
+fun NoteWidget(
     content: String?,
     onClick: () -> Unit
 ) {
@@ -186,7 +132,7 @@ private fun NoteWidget(
 }
 
 @Composable
-private fun AgendaModule(
+fun AgendaModule(
     appointments: List<Appointment>,
     selectedDate: Date,
     onDateSelected: (Date) -> Unit,
@@ -298,7 +244,7 @@ private fun AgendaModule(
 }
 
 @Composable
-private fun HabitudesWidget(
+fun HabitudesWidget(
     habits: List<Habit>,
     logs: List<HabitLog>,
     onClick: () -> Unit
@@ -356,52 +302,51 @@ private fun HabitudesWidget(
 }
 
 @Composable
-private fun GoalsWidget(
-    goals: List<Goal>,
-    onClick: () -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        ModuleHeader(
-            title = "Objectifs",
-            onClick = onClick,
-            containerColor = Color.Transparent
+fun DashboardHeader() {
+    val today = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(horizontal = 20.dp, vertical = 16.dp)
+    ) {
+        Text(
+            text = "Orbyt",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
-
-        OrbytCard(onClick = onClick) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                if (goals.isEmpty()) {
-                    Text("Aucun objectif actif", style = MaterialTheme.typography.bodyMedium, color = TextSecondaryLight)
-                } else {
-                    goals.take(5).forEach { goal ->
-                        val progress = if (goal.status == GoalStatus.ACHIEVED) 1f else 0.5f // Placeholder logic
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = goal.title,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Text(
-                                    text = "${(progress * 100).toInt()}%",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = OrbytBlue
-                                )
-                            }
-                            LinearProgressIndicator(
-                                progress = { progress },
-                                modifier = Modifier.fillMaxWidth().height(4.dp).clip(CircleShape),
-                                color = OrbytBlue,
-                                trackColor = OrbytBlue.copy(alpha = 0.1f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        Text(
+            text = today.replaceFirstChar { it.uppercase() },
+            style = MaterialTheme.typography.labelMedium,
+            color = TextSecondaryLight
+        )
     }
+}
+
+@Composable
+fun ModuleHeader(
+    title: String,
+    onClick: () -> Unit,
+    containerColor: Color? = null
+) {
+    com.abdessamad.orbyt.ui.components.ModuleHeader(
+        title = title,
+        onClick = onClick,
+        containerColor = containerColor
+    )
+}
+
+@Composable
+fun DashboardModuleContainer(content: @Composable () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.03f))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        content = content
+    )
 }
 
 
